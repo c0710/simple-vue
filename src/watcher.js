@@ -29,6 +29,7 @@ export default class Watcher {
     }
 
     addDep(dep) {
+        console.log('addDep');
         if (!this.depIds.hasOwnProperty(dep.id)) {
             dep.addSub(this);
             this.depIds[dep.id] = dep;
@@ -37,7 +38,7 @@ export default class Watcher {
 
     get() {
         Dep.target = this;          // 将当前订阅者指向自己
-        let value = this.vm[exp];   // 触发getter，添加自己到属性订阅器中
+        let value = this.vm[this.exp];   // 触发getter，添加自己到属性订阅器中
         Dep.target = null;          // 添加完毕，重置
         return value;
     }

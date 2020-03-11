@@ -5,12 +5,17 @@
     <title>simple vue</title>
 </head>
 <body>
-<div id="container">
-    {{ msg }}<br>
-    <input class="inp-text" type="text" v-model="inpText">
-    <div class="text-box">
-        <p class="show-text">{{ msg }}</p>
-    </div>
+
+<div id="root">
+    <input v-class="someStr" type="text" v-model="someStr">
+    <input type="text" v-model="child.someStr">
+    <p v-class="className" class="abc">
+        {{someStr}}
+        <span v-text="child.someStr"></span>
+    </p>
+    <p>{{ getHelloWord }}</p>
+    <p v-html="htmlStr"></p>
+    <button v-on:click="clickBtn">change model</button>
 </div>
 
 

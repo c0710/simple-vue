@@ -18,7 +18,7 @@ class Observer {
         this.defineReactive(this.data, key, val);
     }
 
-    defineReactive(ata, key, val) {
+    defineReactive(data, key, val) {
         let dep = new Dep();
         let childObj = observe(val);
 
@@ -32,6 +32,7 @@ class Observer {
                 return val;
             },
             set: function(newVal) {
+                console.log(key + '变了：' + val + ' => ' + newVal);
                 if (newVal === val) {
                     return;
                 }

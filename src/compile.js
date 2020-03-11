@@ -1,10 +1,12 @@
-
+import Watcher from './watcher';
 
 export default class Compile {
-    constructor(el) {
-        this.$el = isElement(el) ? el : document.querySelector(el);
+    constructor(el, vm) {
+        this.$vm = vm;
+        this.$el = this.isElementNode(el) ? el : document.querySelector(el);
         if (this.$el) {
-            this.$fragment = this.node2Fragment(this.$el);
+            this.$fragment = Compile.node2Fragment(this.$el);
+            console.log(this.$fragment);
             this.init();
             this.$el.appendChild(this.$fragment);
         }
@@ -25,13 +27,14 @@ export default class Compile {
     }
 
     compileElement (el) {
-        let childNodes = el.childNodes, me = this;
+        let childNodes = el.childNodes,
+            me = this;
         [].slice.call(childNodes).forEach(function(node) {
             let text = node.textContent;
             let reg = /\{\{(.*)\}\}/;    // 表达式文本
             // 按元素节点方式编译
             if (me.isElementNode(node)) {
-                me.compile(node);
+                me.compileNode(node);
             } else if (me.isTextNode(node) && reg.test(text)) {
                 me.compileText(node, RegExp.$1);
             }
@@ -40,22 +43,158 @@ export default class Compile {
                 me.compileElement(node);
             }
         });
-    },
-}
-
-
-function isElement(obj) {
-    if (obj && obj.nodeType === 1) {//先过滤最简单的
-        if( window.Node && (obj instanceof Node )){ //如果是IE9,则判定其是否Node的实例
-            return true; //由于obj可能是来自另一个文档对象，因此不能轻易返回false
-        }
-        try {//最后以这种效率非常差但肯定可行的方案进行判定
-            testDiv.appendChild(obj);
-            testDiv.removeChild(obj);
-        } catch (e) {
-            return false;
-        }
-        return true;
     }
-    return false;
+
+    compileNode (node) {
+        let nodeAttrs = node.attributes,
+            me = this;
+
+
+        [].slice.call(nodeAttrs).forEach(function(attr) {
+                let attrName = attr.name;
+                if (me.isDirective(attrName)) {
+                    let val = attr.value;               // 指令值
+                    let dir = attrName.substring(2);    // 指令名
+
+                    // 事件指令
+                    if (me.isEventDirective(dir)) {
+                        compileUtil.eventHandler(node, me.$vm, val, dir);
+                        // 普通指令
+                    } else {
+                        compileUtil[dir] && compileUtil[dir](node, me.$vm, val);
+                    }
+
+                    node.removeAttribute(attrName);
+                }
+        });
+    }
+
+    compileText (node, exp) {
+        compileUtil.text(node, this.$vm, exp);
+    }
+
+    isDirective (attr) {
+        return attr.indexOf('v-') === 0;
+    }
+
+    isEventDirective (dir) {
+        return dir.indexOf('on') === 0;
+    }
+
+    isElementNode (node) {
+        return node.nodeType === 1;
+    }
+
+    isTextNode (node) {
+        return node.nodeType === 3;
+    }
 }
+
+const compileUtil = {
+    bind (node, vm, exp, dir) {
+        // 更新函数
+        const updaterFn = updater[dir + 'Updater'];
+        updaterFn && updaterFn(node, this._getVMVal(vm, exp));
+
+        new Watcher(vm, exp, (value, oldValue) => {
+            updaterFn && updaterFn(node, value, oldValue);
+        });
+
+    },
+
+    // 事件处理
+    eventHandler (node, vm, exp, dir) {
+        let eventType = dir.split(':')[1],
+            fn = vm.$options.methods && vm.$options.methods[exp];
+
+        if (eventType && fn) {
+            node.addEventListener(eventType, fn.bind(vm), false);
+        }
+    },
+
+    _getVMVal (vm, exp) {
+        let val = vm;
+        exp = exp.split('.');
+        exp.forEach(k => {
+            val = val[k];
+        });
+        return val;
+    },
+
+
+    _setVMVal (vm, exp, value) {
+        let val = vm;
+        exp = exp.split('.');
+        exp.forEach((k, i) => {
+            // 非最后一个key，更新val的值
+            if (i < exp.length - 1) {
+                val = val[k];
+            } else {
+                console.log(k);
+                console.log(val[k]);
+                val[k] = value;
+            }
+        });
+    },
+
+    text (node, vm, exp) {
+        this.bind(node, vm, exp, 'text');
+    },
+
+    html (node, vm, exp) {
+        this.bind(node, vm, exp, 'html');
+    },
+
+
+    model (node, vm, exp) {
+        this.bind(node, vm, exp, 'model');
+
+        let me = this,
+            val = this._getVMVal(vm, exp);
+        console.log(node);
+        node.addEventListener('input', e => {
+            let newValue = e.target.value;
+            console.log(val + '   ===>  ' + newValue);
+            if (val === newValue) {
+                return;
+            }
+
+            me._setVMVal(vm, exp, newValue);
+            val = newValue;
+        });
+    },
+
+    class (node, vm, exp) {
+        this.bind(node, vm, exp, 'class');
+    },
+};
+
+const updater = {
+    // 更新文字节点
+    textUpdater(node, value) {
+        node.textContent = typeof value === 'undefined' ? '' : value;
+    },
+
+    // 更新html节点
+    htmlUpdater(node, value) {
+        node.innerHTML = typeof value === 'undefined' ? '' : value;
+    },
+
+    modelUpdater (node, value, oldValue) {
+        console.log('modelUpdater');
+        node.value = typeof value === 'undefined' ? '' : value;
+    },
+
+    classUpdater (node, value, oldValue) {
+        let className = node.className;
+        className = className.replace(oldValue, '').replace(/\s$/, '');
+
+        let space = className && String(value) ? ' ' : '';
+
+        node.className = className + space + value;
+    },
+};
+
+
+
+

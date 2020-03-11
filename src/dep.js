@@ -7,7 +7,6 @@ export default class Dep {
         this.subs = [];
     }
 
-    static Target = null;
 
     addSub(sub) {
         this.subs.push(sub);
@@ -25,8 +24,11 @@ export default class Dep {
     }
 
     notify() {
+        console.log(this.subs);
         this.subs.forEach(sub => {
             sub.update();
         })
     }
 }
+
+Dep.Target = null;

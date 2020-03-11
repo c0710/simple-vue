@@ -1,37 +1,38 @@
 import Compile from './compile';
+import { observe } from './observer';
 
 
 export default class MVVM {
     constructor(options) {
-        this.$options = optiojns || {};
+        this.$options = options || {};
 
         let data = this._data = this.$options.data;
         const me = this;
 
         // 数据代理
         // 实现 vm.xxx -> vm._data.xxx
+        console.log(options);
+        console.log(Object.keys(data));
         Object.keys(data).forEach(key => {
             me._proxyData(key);
         });
 
         observe(data, this);
 
-        this.$compile = new Compile(options.el || document.body, this)
-
+        this.$compile = new Compile(options.el || document.body, this);
     }
 
-    _proxyData (key, setter, getter) {
-        var me = this;
-        setter = setter ||
-            Object.defineProperty(me, key, {
-                configurable: false,
-                enumerable: true,
-                get: function proxyGetter() {
-                    return me._data[key];
-                },
-                set: function proxySetter(newVal) {
-                    me._data[key] = newVal;
-                }
-            });
-    },
+    _proxyData (key) {
+        const me = this;
+        Object.defineProperty(me, key, {
+            configurable: false,
+            enumerable: true,
+            get () {
+                return me._data[key];
+            },
+            set (newVal) {
+                me._data[key] = newVal;
+            }
+        });
+    }
 }
