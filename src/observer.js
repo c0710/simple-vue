@@ -1,39 +1,55 @@
 
 import Dep from './dep';
 
-let obj = { name: 'wang' };
+class Observer {
+    constructor(data) {
+        this.data = data;
+        this.walk(data);
+    }
 
-observe(obj);
+    walk (data) {
+        const me = this;
+        Object.keys(data).forEach(function(key) {
+            me.convert(key, data[key]);
+        });
+    }
 
-obj.name = 'li';
+    convert (key, val) {
+        this.defineReactive(this.data, key, val);
+    }
 
-function observe(data) {
+    defineReactive(ata, key, val) {
+        let dep = new Dep();
+        let childObj = observe(val);
+
+        Object.defineProperty(data, key, {
+            enumerable: true, // 可枚举
+            configurable: false, // 不能再define
+            get: function() {
+                if (Dep.target) {
+                    dep.depend();
+                }
+                return val;
+            },
+            set: function(newVal) {
+                if (newVal === val) {
+                    return;
+                }
+                val = newVal;
+                // 新的值是object的话，进行监听
+                childObj = observe(newVal);
+                // 通知订阅者
+                dep.notify();
+            }
+        });
+    }
+}
+
+
+export const observe = (data, vm) => {
     if (!data || typeof data !== 'object') {
         return;
     }
 
-    Object.keys(data).forEach(key => {
-        console.log(key);
-        defineReactive(data, key, data[key]);
-    })
-}
-
-function defineReactive(data, key, val) {
-    let dep = new Dep();
-    // 监听子属性
-    observe(val);
-
-    Object.defineProperty(data, key, {
-        enumerable: true,
-        configurable: false,
-        get() {
-            return val;
-        },
-
-        set(newVal) {
-            if ( val === newVal) return;
-            console.log(`listen ${key}: ${val} => ${newVal}`);
-            val = newVal;
-        }
-    })
-}
+    return new Observer(data);
+};
