@@ -21,18 +21,16 @@ class Observer {
     defineReactive(data, key, val) {
         let dep = new Dep();
         let childObj = observe(val);
-
         Object.defineProperty(data, key, {
             enumerable: true, // 可枚举
             configurable: false, // 不能再define
-            get: function() {
+            get () {
                 if (Dep.target) {
                     dep.depend();
                 }
                 return val;
             },
-            set: function(newVal) {
-                console.log(key + '变了：' + val + ' => ' + newVal);
+            set (newVal) {
                 if (newVal === val) {
                     return;
                 }

@@ -130,8 +130,6 @@ const compileUtil = {
             if (i < exp.length - 1) {
                 val = val[k];
             } else {
-                console.log(k);
-                console.log(val[k]);
                 val[k] = value;
             }
         });
@@ -151,10 +149,8 @@ const compileUtil = {
 
         let me = this,
             val = this._getVMVal(vm, exp);
-        console.log(node);
         node.addEventListener('input', e => {
             let newValue = e.target.value;
-            console.log(val + '   ===>  ' + newValue);
             if (val === newValue) {
                 return;
             }
@@ -181,7 +177,6 @@ const updater = {
     },
 
     modelUpdater (node, value, oldValue) {
-        console.log('modelUpdater');
         node.value = typeof value === 'undefined' ? '' : value;
     },
 

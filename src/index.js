@@ -9,9 +9,16 @@ let vm = new MVVM({
         className: 'btn',
         htmlStr: '<span style="color: #f00;">red</span>',
         child: {
-            someStr: 'World !'
+            subStr: 'World !'
+        }
+    },
+    methods: {
+        clickBtn (e) {
+            var randomStrArr = ['childOne', 'childTwo', 'childThree'];
+            this.child.subStr = randomStrArr[parseInt(Math.random() * 3)];
         }
     }
-})
+
+});
 
 console.log(vm);

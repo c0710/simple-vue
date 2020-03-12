@@ -7,15 +7,25 @@
 <body>
 
 <div id="root">
-    <input v-class="someStr" type="text" v-model="someStr">
-    <input type="text" v-model="child.someStr">
-    <p v-class="className" class="abc">
-        {{someStr}}
-        <span v-text="child.someStr"></span>
-    </p>
-    <p>{{ getHelloWord }}</p>
+    <div>
+        <div>model someStr</div><input v-class="someStr" type="text" v-model="someStr">
+    </div>
+    <br/>
+    <div>
+        <div>model child.subStr</div>
+        <input type="text" v-model="child.subStr">
+    </div>
+    <br/>
+    <div>someStr: {{someStr}}</div>
+    <div>child.subStr: {{child.subStr}}</div>
+
+    <!--<p v-class="className" class="abc">-->
+        <!--{{someStr}}-->
+        <!--<span v-text="child.someStr"></span>-->
+    <!--</p>-->
+    <!--<p>{{ getHelloWord }}</p>-->
     <p v-html="htmlStr"></p>
-    <button v-on:click="clickBtn">change model</button>
+    <button v-on:click="clickBtn">change child.subStr</button>
 </div>
 
 
