@@ -11,8 +11,6 @@ export default class MVVM {
 
         // 数据代理
         // 实现 vm.xxx -> vm._data.xxx
-        console.log(options);
-        console.log(Object.keys(data));
         Object.keys(data).forEach(key => {
             me._proxyData(key);
         });

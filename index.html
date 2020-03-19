@@ -3,29 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <title>simple vue</title>
+    <style>
+        .line {
+            width: 500px;
+            height: 2px;
+            background-color: #5bddff;
+            margin: 10px 0;
+        }
+        .title {
+            font-size: 16px;
+            color: #000;
+            font-weight: bold;
+        }
+
+        input {
+            width: 500px;
+            outline: none;
+            border: 1px solid #ccc;
+            padding: 4px;
+            border-radius: 2px;
+            font-size: 14px;
+            color: #666;
+        }
+        .tip {
+            color: #999999;
+            font-size: 12px;
+        }
+
+        .red {
+            color: #ff0000;
+        }
+        .blue {
+            color: blue;
+        }
+    </style>
 </head>
 <body>
 
 <div id="root">
     <div>
-        <div>model someStr</div><input v-class="someStr" type="text" v-model="someStr">
+        <p class="title">绑定data中的一个普通属性someStr</p>
+        <div>v-model someStr:  {{someStr}}</div>
+        <input v-class="someStr" type="text" v-model="someStr">
     </div>
-    <br/>
+
+
+    <div class="line"></div>
+
+
     <div>
-        <div>model child.subStr</div>
+        <p class="title">绑定data中的一个对象的子属性child.subStr</p>
+        <div>model child.subStr： {{child.subStr}}</div>
         <input type="text" v-model="child.subStr">
     </div>
-    <br/>
-    <div>someStr: {{someStr}}</div>
-    <div>child.subStr: {{child.subStr}}</div>
 
-    <!--<p v-class="className" class="abc">-->
+
+    <div class="line"></div>
+
+
+    <p class="title">v-text绑定第一个属性someStr</p>
+    <div v-text="someStr"></div>
+
+
+    <div class="line"></div>
+
+
+    <p class="title">v-html绑定htmlStr </p>
+    <div v-html="htmlStr"></div>
+    <div class="tip">这个输入框可以修改htmlStr</div>
+    <input type="text" v-model="htmlStr">
+
+
+    <div class="line"></div>
+
+
+    <p class="title">v-class绑定classStr </p>
+    <div v-class="classStr">我可以切换class!</div>
+    <div class="tip">这个输入框可以修改classStr (有red, blue等可改变字体颜色的类名)</div>
+    <input type="text" v-model="classStr">
+
+
+    <!--<p v-class="child.subStr" class="abc">-->
         <!--{{someStr}}-->
-        <!--<span v-text="child.someStr"></span>-->
+        <!--<span v-text="child.subStr"></span>-->
     <!--</p>-->
     <!--<p>{{ getHelloWord }}</p>-->
-    <p v-html="htmlStr"></p>
-    <button v-on:click="clickBtn">change child.subStr</button>
+    <!--<p v-html="htmlStr"></p>-->
+    <!--<button v-on:click="clickBtn">change child.subStr</button>-->
 </div>
 
 

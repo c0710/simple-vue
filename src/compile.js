@@ -1,4 +1,5 @@
 import Watcher from './watcher';
+import {parseText, replace} from "./utils";
 
 export default class Compile {
     constructor(el, vm) {
@@ -29,14 +30,35 @@ export default class Compile {
     compileElement (el) {
         let childNodes = el.childNodes,
             me = this;
-        [].slice.call(childNodes).forEach(function(node) {
+        [].slice.call(childNodes).forEach(node => {
             let text = node.textContent;
-            let reg = /\{\{(.*)\}\}/;    // 表达式文本
+            let reg = /\{\{[^\{\}\s]*\}\}/gm;     // 表达式文本
             // 按元素节点方式编译
             if (me.isElementNode(node)) {
                 me.compileNode(node);
-            } else if (me.isTextNode(node) && reg.test(text)) {
-                me.compileText(node, RegExp.$1);
+            } else if (me.isTextNode(node)) {
+                // 如this is number1: {{number1}}这种，我们必须转换为两个文本节点，
+                // 一个是this is number1: ，它不需要进行任何处理；另一个是{{number1}}，它需要进行数据绑定，并实现双向绑定
+                let tokens = parseText(text);
+                let frag = document.createDocumentFragment();
+                for(let i = 0, _i = tokens.length; i < _i; i++) {
+                    let token = tokens[i],
+                        el = document.createTextNode(token.value);
+                    frag.appendChild(el);
+                }
+                // 将原本的一个文本节点替换为新的分为几份的文本节点
+                let fragClone = frag.cloneNode(true);
+                if(tokens.length) {
+                    let newNodeChild = fragClone.childNodes;
+                    tokens.forEach((token, i) => {
+                        // 给其中需要监听的文本绑定更新事件
+                        if (token.tag) {
+                            me.compileText(newNodeChild[i], token.value);
+                        }
+                    });
+
+                    replace(node, fragClone);
+                }
             }
             // 遍历编译子节点
             if (node.childNodes && node.childNodes.length) {
@@ -70,6 +92,7 @@ export default class Compile {
     }
 
     compileText (node, exp) {
+        console.log(node, exp);
         compileUtil.text(node, this.$vm, exp);
     }
 
@@ -94,10 +117,10 @@ const compileUtil = {
     bind (node, vm, exp, dir) {
         // 更新函数
         const updaterFn = updater[dir + 'Updater'];
-        updaterFn && updaterFn(node, this._getVMVal(vm, exp));
+        updaterFn && updaterFn(node, this._getVMVal(vm, exp), exp);
 
         new Watcher(vm, exp, (value, oldValue) => {
-            updaterFn && updaterFn(node, value, oldValue);
+            updaterFn && updaterFn(node, value, oldValue, exp);
         });
 
     },
@@ -176,7 +199,7 @@ const updater = {
         node.innerHTML = typeof value === 'undefined' ? '' : value;
     },
 
-    modelUpdater (node, value, oldValue) {
+    modelUpdater (node, value) {
         node.value = typeof value === 'undefined' ? '' : value;
     },
 

@@ -6,7 +6,9 @@ let vm = new MVVM({
     el: '#root',
     data: {
         someStr: 'hello ',
-        className: 'btn',
+        someStr1: 'str11111',
+        someStr2: 'str222222',
+        classStr: 'red',
         htmlStr: '<span style="color: #f00;">red</span>',
         child: {
             subStr: 'World !'
