@@ -18,6 +18,7 @@ export default class MVVM {
         observe(data, this);
 
         this.$compile = new Compile(options.el || document.body, this);
+        
     }
 
     _proxyData (key) {

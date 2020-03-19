@@ -92,7 +92,6 @@ export default class Compile {
     }
 
     compileText (node, exp) {
-        console.log(node, exp);
         compileUtil.text(node, this.$vm, exp);
     }
 
