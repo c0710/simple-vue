@@ -17,7 +17,13 @@ let vm = new MVVM({
     methods: {
         clickBtn (e) {
             var randomStrArr = ['childOne', 'childTwo', 'childThree'];
-            this.child.subStr = randomStrArr[parseInt(Math.random() * 3)];
+            this.child.subStr = randomStrArr[parseInt(Math.random() * 3)] + Math.round(Math.random() * 10);
+        }
+    },
+
+    computed: {
+        someStr12() {
+            return this.someStr + this.someStr2
         }
     }
 
