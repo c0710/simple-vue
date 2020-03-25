@@ -15,6 +15,7 @@ export default class MVVM {
             me._proxyData(key);
         });
 
+        // 计算属性
         this._initComputed();
 
         observe(data, this);
@@ -47,7 +48,9 @@ export default class MVVM {
                     get: typeof computed[key] === 'function'
                         ? computed[key]
                         : computed[key].get,
-                    set: function() {}
+                    set: typeof computed[key] === 'function'
+                        ? function() {}
+                        : computed[key].set,
                 });
             });
         }
