@@ -53,7 +53,7 @@ export default class Watcher {
         var exps = exp.split('.');
 
         return function(obj) {
-            for (var i = 0, len = exps.length; i < len; i++) {
+            for (let i = 0, len = exps.length; i < len; i++) {
                 if (!obj) return;
                 obj = obj[exps[i]];
             }

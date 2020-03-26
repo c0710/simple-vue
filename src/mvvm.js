@@ -1,5 +1,6 @@
 import Compile from './compile';
 import { observe } from './observer';
+import Watcher from './watcher'
 
 
 export default class MVVM {
@@ -17,6 +18,9 @@ export default class MVVM {
 
         // 计算属性
         this._initComputed();
+
+        // watch
+        this._initWatch();
 
         observe(data, this);
 
@@ -43,7 +47,6 @@ export default class MVVM {
         const computed = this.$options.computed;
         if (typeof computed === 'object') {
             Object.keys(computed).forEach(key => {
-                console.log(key);
                 Object.defineProperty(me, key, {
                     get: typeof computed[key] === 'function'
                         ? computed[key]
@@ -55,4 +58,53 @@ export default class MVVM {
             });
         }
     }
+
+    _initWatch() {
+        const me = this;
+        const watch = this.$options.watch;
+
+        for (let key in watch) {
+
+            let watchOpt = watch[key];
+            MVVM.createWatcher(me, key, watchOpt);
+        }
+    }
+
+    // expOrFn 是 监听的 key，cb 是监听回调，opts 是所有选项
+    $watch (expOrFn, cb, opts) {
+        let watcher = new Watcher(this, expOrFn, cb, opts);
+
+
+
+        // 设定了立即执行，所以马上执行回调
+
+        if (opts && opts.immediate) {
+            cb.call(this, watcher.value);
+        }
+    }
+
+    static createWatcher (vm, expOrFn, handler, opts) {
+
+        // 监听属性的值是一个对象，包含handler，deep，immediate
+
+        if (typeof handler === "object") {
+            opts= handler;
+            handler = handler.handler
+        }
+
+
+
+        // 回调函数是一个字符串，从 vm 获取
+
+        if (typeof handler === 'string') {
+            handler = vm[handler]
+        }
+
+
+
+        // expOrFn 是 key，options 是watch 的全部选项
+
+        vm.$watch(expOrFn, handler, opts)
+    }
+
 }

@@ -18,12 +18,26 @@ let vm = new MVVM({
         clickBtn (e) {
             var randomStrArr = ['childOne', 'childTwo', 'childThree'];
             this.child.subStr = randomStrArr[parseInt(Math.random() * 3)] + Math.round(Math.random() * 10);
+            this.someStr12 = Math.round(Math.random() * 10);
+            console.log(this.someStr12);
         }
     },
 
     computed: {
-        someStr12() {
-            return this.someStr + this.someStr2
+        someStr12: {
+            get() {
+                return this.someStr + this.someStr2
+            },
+            set(val) {
+                console.log('set', val);
+            }
+
+        }
+    },
+
+    watch: {
+        someStr(newVal) {
+            console.log(`someStr:  ${this.someStr} => ${newVal}`);
         }
     }
 

@@ -7,7 +7,6 @@ export default class Compile {
         this.$el = this.isElementNode(el) ? el : document.querySelector(el);
         if (this.$el) {
             this.$fragment = Compile.node2Fragment(this.$el);
-            console.log(this.$fragment);
             this.init();
             this.$el.appendChild(this.$fragment);
         }
