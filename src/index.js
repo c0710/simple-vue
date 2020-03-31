@@ -15,11 +15,10 @@ let vm = new MVVM({
         }
     },
     methods: {
-        clickBtn (e) {
+        clickBtn(e) {
             var randomStrArr = ['childOne', 'childTwo', 'childThree'];
             this.child.subStr = randomStrArr[parseInt(Math.random() * 3)] + Math.round(Math.random() * 10);
             this.someStr12 = Math.round(Math.random() * 10);
-            console.log(this.someStr12);
         }
     },
 
@@ -31,13 +30,15 @@ let vm = new MVVM({
             set(val) {
                 console.log('set', val);
             }
-
-        }
+        },
+        someComputedKey() {
+            return this.someStr + this.classStr;
+        },
     },
 
     watch: {
         someStr(newVal) {
-            console.log(`someStr:  ${this.someStr} => ${newVal}`);
+            console.log(`watch someStr:  ${this.someStr} => ${newVal}`);
         }
     }
 

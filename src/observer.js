@@ -1,4 +1,3 @@
-
 import Dep from './dep';
 
 class Observer {
@@ -7,14 +6,14 @@ class Observer {
         this.walk(data);
     }
 
-    walk (data) {
+    walk(data) {
         const me = this;
-        Object.keys(data).forEach(function(key) {
+        Object.keys(data).forEach(function (key) {
             me.convert(key, data[key]);
         });
     }
 
-    convert (key, val) {
+    convert(key, val) {
         this.defineReactive(this.data, key, val);
     }
 
@@ -24,13 +23,14 @@ class Observer {
         Object.defineProperty(data, key, {
             enumerable: true, // 可枚举
             configurable: false, // 不能再define
-            get () {
+            get() {
+                // console.log(`检测到 ${key} 被读取`)
                 if (Dep.target) {
                     dep.depend();
                 }
                 return val;
             },
-            set (newVal) {
+            set(newVal) {
                 if (newVal === val) {
                     return;
                 }

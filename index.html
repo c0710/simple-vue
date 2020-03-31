@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>simple vue</title>
@@ -10,6 +11,7 @@
             background-color: #5bddff;
             margin: 10px 0;
         }
+
         .title {
             font-size: 16px;
             color: #000;
@@ -25,6 +27,7 @@
             font-size: 14px;
             color: #666;
         }
+
         .tip {
             color: #999999;
             font-size: 12px;
@@ -33,78 +36,86 @@
         .red {
             color: #ff0000;
         }
+
         .blue {
             color: blue;
         }
     </style>
 </head>
+
 <body>
 
-<div id="root">
-    <div>
-        <p class="title">绑定data中的一个普通属性someStr</p>
-        <div>v-model someStr:  {{someStr}}</div>
-        <input v-class="someStr" type="text" v-model="someStr">
-    </div>
+    <div id="root">
+        <div>
+            <p class="title">绑定data中的一个普通属性someStr</p>
+            <div>v-model someStr: {{someStr}}</div>
+            <input v-class="someStr" type="text" v-model="someStr">
+        </div>
 
 
-    <div class="line"></div>
+        <div class="line"></div>
 
 
-    <div>
-        <p class="title">绑定data中的一个对象的子属性child.subStr</p>
-        <div>model child.subStr： {{child.subStr}}</div>
-        <input type="text" v-model="child.subStr">
-    </div>
+        <div>
+            <p class="title">绑定data中的一个对象的子属性child.subStr</p>
+            <div>model child.subStr： {{child.subStr}}</div>
+            <input type="text" v-model="child.subStr">
+        </div>
 
 
-    <div class="line"></div>
+        <div class="line"></div>
 
 
-    <p class="title">v-text绑定第一个属性someStr</p>
-    <div v-text="someStr"></div>
+        <p class="title">v-text绑定第一个属性someStr</p>
+        <div v-text="someStr"></div>
 
 
-    <div class="line"></div>
+        <div class="line"></div>
 
 
-    <p class="title">v-html绑定htmlStr </p>
-    <div v-html="htmlStr"></div>
-    <div class="tip">这个输入框可以修改htmlStr</div>
-    <input type="text" v-model="htmlStr">
+        <p class="title">v-html绑定htmlStr </p>
+        <div v-html="htmlStr"></div>
+        <div class="tip">这个输入框可以修改htmlStr</div>
+        <input type="text" v-model="htmlStr">
 
 
-    <div class="line"></div>
+        <div class="line"></div>
 
 
-    <p class="title">v-class绑定classStr </p>
-    <div v-class="classStr">我可以切换class!</div>
-    <div class="tip">这个输入框可以修改classStr (有red, blue等可改变字体颜色的类名)</div>
-    <input type="text" v-model="classStr">
+        <p class="title">v-class绑定classStr </p>
+        <div v-class="classStr">我可以切换class!</div>
+        <div class="tip">这个输入框可以修改classStr (有red, blue等可改变字体颜色的类名)</div>
+        <input type="text" v-model="classStr">
 
 
-    <div class="line"></div>
+        <div class="line"></div>
 
 
-    <p class="title">v-bind 事件绑定 修改 child.subStr 的值</p>
-    <button v-on:click="clickBtn">change child.subStr</button>
+        <p class="title">v-bind 事件绑定 修改 child.subStr 的值</p>
+        <button v-on:click="clickBtn">change child.subStr</button>
 
 
-    <div class="line"></div>
+        <div class="line"></div>
 
 
-    <p class="title">计算属性 someStr12:   {{someStr12}}</p>
+        <p class="title">计算属性 someStr12: {{someStr12}}</p>
 
 
-    <!--<p v-class="child.subStr" class="abc">-->
+        <div class="line"></div>
+
+        <p class="title">计算属性 someComputedKey： {{someComputedKey}}</p>
+
+
+        <!--<p v-class="child.subStr" class="abc">-->
         <!--{{someStr}}-->
         <!--<span v-text="child.subStr"></span>-->
-    <!--</p>-->
-    <!--<p>{{ getHelloWord }}</p>-->
-    <!--<p v-html="htmlStr"></p>-->
-    <!--<button v-on:click="clickBtn">change child.subStr</button>-->
-</div>
+        <!--</p>-->
+        <!--<p>{{ getHelloWord }}</p>-->
+        <!--<p v-html="htmlStr"></p>-->
+        <!--<button v-on:click="clickBtn">change child.subStr</button>-->
+    </div>
 
 
 </body>
+
 </html>

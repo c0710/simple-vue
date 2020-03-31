@@ -1,5 +1,7 @@
 import Compile from './compile';
-import { observe } from './observer';
+import {
+    observe
+} from './observer';
 import Watcher from './watcher'
 
 
@@ -16,44 +18,42 @@ export default class MVVM {
             me._proxyData(key);
         });
 
+        observe(data, this);
+
         // 计算属性
         this._initComputed();
 
         // watch
         this._initWatch();
 
-        observe(data, this);
-
         this.$compile = new Compile(options.el || document.body, this);
 
     }
 
-    _proxyData (key) {
+    _proxyData(key) {
         const me = this;
         Object.defineProperty(me, key, {
             configurable: false,
             enumerable: true,
-            get () {
+            get() {
                 return me._data[key];
             },
-            set (newVal) {
+            set(newVal) {
                 me._data[key] = newVal;
             }
         });
     }
 
-    _initComputed () {
+    _initComputed() {
         const me = this;
         const computed = this.$options.computed;
         if (typeof computed === 'object') {
             Object.keys(computed).forEach(key => {
                 Object.defineProperty(me, key, {
-                    get: typeof computed[key] === 'function'
-                        ? computed[key]
-                        : computed[key].get,
-                    set: typeof computed[key] === 'function'
-                        ? function() {}
-                        : computed[key].set,
+                    get: typeof computed[key] === 'function' ?
+                        computed[key] : computed[key].get,
+                    set: typeof computed[key] === 'function' ?
+                        function () {} : computed[key].set,
                 });
             });
         }
@@ -71,7 +71,8 @@ export default class MVVM {
     }
 
     // expOrFn 是 监听的 key，cb 是监听回调，opts 是所有选项
-    $watch (expOrFn, cb, opts) {
+    $watch(expOrFn, cb, opts) {
+        console.log(this, expOrFn, cb, opts)
         let watcher = new Watcher(this, expOrFn, cb, opts);
 
 
@@ -83,12 +84,12 @@ export default class MVVM {
         }
     }
 
-    static createWatcher (vm, expOrFn, handler, opts) {
+    static createWatcher(vm, expOrFn, handler, opts) {
 
         // 监听属性的值是一个对象，包含handler，deep，immediate
 
         if (typeof handler === "object") {
-            opts= handler;
+            opts = handler;
             handler = handler.handler
         }
 
@@ -100,7 +101,11 @@ export default class MVVM {
             handler = vm[handler]
         }
 
-
+        opts = opts ? Object.assign(opts, {
+            watcherType: 'watch'
+        }) : {
+            watcherType: 'watch'
+        };
 
         // expOrFn 是 key，options 是watch 的全部选项
 
